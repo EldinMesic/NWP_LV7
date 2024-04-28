@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title Login
+  body
+    h1 Login
+    if locals.error
+      p Error: #{error}
+    form(action="/login", method="post")
+      p
+        label(for="emailOrUsername") Email or Username:
+        input(type="text", id="emailOrUsername", name="emailOrUsername", required)
+      p
+        label(for="password") Password:
+        input(type="password", id="password", name="password", required)
+      p
+        button(type="submit") Login
+    p Don't have an account? 
+      a(href="../register") Register

@@ -1,0 +1,10 @@
+doctype html
+html
+  head
+    title Home
+  body
+    h1 Welcome to the Home Page
+    form(action="/logout", method="post")
+      button.btn.btn-primary(type="submit") Logout
+    hr
+    button.btn.btn-primary(onclick="window.location.href='/projects'") Projects

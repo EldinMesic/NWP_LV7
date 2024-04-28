@@ -1,0 +1,99 @@
+html(lang='en')
+    head
+        meta(charset='UTF-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        title Update Project
+        style.
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                padding: 20px;
+            }
+            .container {
+                background-color: #fff;
+                border-radius: 5px;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                margin-top: 0;
+            }
+            label {
+                font-weight: bold;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+    body
+        div.container
+            if locals.message
+                p= locals.message
+
+            button.btn.btn-primary(onclick="window.location.href='/projects'") Projects
+            hr
+            
+            form#createForm(method='POST', action=`/projects/${project.id}`)
+                h1 Project Details
+                .form-group
+                    label(for='name') Project Name:
+                    input.form-control(type='text', id='name', name='name', value=project.name, required, disabled=(!isCreator || project.archived))
+                .form-group
+                    label(for='description') Description:
+                    input.form-control(type='text', id='description', name='description',  value=project.description, disabled=(!isCreator || project.archived))
+                .form-group
+                    label(for='completed_jobs') Completed Jobs:
+                    input.form-control(type='text', id='completed_jobs', name='completed_jobs', value=project.completed_jobs, disabled=project.archived)
+                .form-group
+                    label(for='price') Price
+                    input.form-control(type='number', id='price', name='price', min='0', step='0.01', required, value=project.price, disabled=(!isCreator || project.archived))
+                .form-group
+                    div.row
+                        div.col-md-6
+                            label(for='start_date') Start Date
+                            input.form-control(type='date', id='start_date', name='start_date', required, value=project.start_date, disabled=(!isCreator || project.archived))
+                        div.col-md-6
+                            label(for='end_date') End Date
+                            input.form-control(type='date', id='end_date', name='end_date', value=project.end_date, disabled=(!isCreator || project.archived))
+                .form-group
+                    label(for='creator') Project Leader/Creator
+                    div
+                        input.form-control(type='text', id='creator', name='creator', disabled, value=creator.name)
+                .form-group
+                    label(for='duplicateContainer') Members
+                    div#duplicateContainer
+                        each projectUser in projectUsers 
+                            div
+                                select.form-control(name='users[]', disabled=(!isCreator || project.archived)) 
+                                    option(value='') None
+                                    each user in users
+                                        if user.id === projectUser.id
+                                            option(value=user.id, selected)= user.name
+                                        else
+                                            option(value=user.id)= user.name
+                        if isCreator && !project.archived
+                            div#originalElement
+                                div
+                                    select.form-control(name='users[]', disabled=(!isCreator || project.archived))
+                                        option(value='', disabled, selected, hidden) Select Member...
+                                        option(value='') None
+                                        each user in users
+                                            option(value=user.id)= user.name
+                    if isCreator && !project.archived
+                        button#duplicateButton.btn.btn-secondary(type='button') Add more Members
+                .form-group
+                    label(for='archived') Archived
+                    input.form-control(type='checkbox', id='archived', name='archived', checked=project.archived, disabled=(!isCreator || project.archived))
+                if !project.archived
+                    button.btn.btn-primary(type='submit') Update
+
+script.
+    var duplicateButton = document.getElementById('duplicateButton');
+    var duplicateContainer = document.getElementById('duplicateContainer');
+    var index = 1;
+
+    duplicateButton.addEventListener('click', function() {
+        var originalSelect = document.querySelector('#originalElement div');
+        var clonedSelect = originalSelect.cloneNode(true);
+        duplicateContainer.appendChild(clonedSelect);
+        index++;
+    });
